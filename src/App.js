@@ -8,6 +8,8 @@ function App() {
   const diceAmount = 10
   const [dice, setDice] = React.useState([]);
   const [gameOver, setGameOver] = React.useState(false);
+  const [score, setScore] = React.useState(0);
+  const [maxScore, setMaxScore] = React.useState(localStorage.getItem('rolls') || 1000);
 
   React.useEffect(() => {
     let tempDice = []
@@ -23,6 +25,10 @@ function App() {
     setDice(tempDice);
   }, [])
 
+  React.useEffect(() => {
+    localStorage.setItem('rolls', maxScore);
+  }, [maxScore]);
+
   function generateDice() {
     let tempDice = []
     if (gameOver) {
@@ -35,6 +41,10 @@ function App() {
         }
       }
       setGameOver(false);
+      if (maxScore > score) {
+        setMaxScore(score);
+      }
+      setScore(0);
     }
     else {
       for (let i = 0; i < diceAmount; i++) {
@@ -46,6 +56,7 @@ function App() {
         }
 
       }
+      setScore(prevState => prevState + 1);
     }
 
     setDice(tempDice);
@@ -97,11 +108,15 @@ function App() {
 
   return (
     <div className="App">
+      <div className='dice-score' style={{color: score + 10 < maxScore ? "#48754f" : score + 5 < maxScore ? "#baaf4c" : score + 3 < maxScore ? "#ba6932" : "#912121"}}>Rolls: {score}</div>
       {gameOver && <Confetti />}
-      <div className='dice-text'>
+      {gameOver ? <div className='dice-end-score'>The Best Score: {maxScore}<br />Your Score: {score}</div>
+      :
+        <div className='dice-text'>
         <h1>The Tenzies Game</h1>
-        <p>Roll until all dice are same. Click each die to freeze it at its current value between rolls.</p>
+        <p>Roll until all dice are same. Click each die to freeze it at its current value between rolls. Lower the score, better the result.</p>
       </div>
+      }
       <div className='dice-container'>
         {dice.map(die => {
           return <Die key={die.id} value={die.value} selected={die.selected} handleToggle={() => handleDieClick(die.id)} />

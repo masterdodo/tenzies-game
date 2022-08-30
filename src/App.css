@@ -30,6 +30,14 @@
   color: white;
 }
 
-.dice-text {
-  
+.dice-score {
+  position: absolute;
+  top: 6%;
+  left: 6%;
+  font-size: 34px;
+  font-weight: bold;
+}
+
+.dice-end-score {
+  font-size: 32px;
 }
